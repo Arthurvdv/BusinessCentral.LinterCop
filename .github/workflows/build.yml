@@ -278,14 +278,24 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
-        # Publish the signed packages
-      - name: Upload Release Assets
+      # Publish the signed packages
+      - name: Upload Multiple Release Assets
         id: upload-release-assets
-        uses: actions/upload-release-asset@v1
+        uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
           assets_path: BuildArtifacts
-          # asset_name: ${{ matrix.assetname }}
-          # asset_content_type: application/octet-stream
+
+      #   # Publish the signed packages
+      # - name: Upload Release Assets
+      #   id: upload-release-assets
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     assets_path: BuildArtifacts
+      #     # asset_name: ${{ matrix.assetname }}
+      #     # asset_content_type: application/octet-stream
