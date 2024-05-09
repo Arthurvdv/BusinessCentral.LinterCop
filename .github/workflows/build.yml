@@ -190,6 +190,7 @@ jobs:
         with:
           name: ${{ matrix.assetname }}
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
       ### Upload Asset as Latest
       - name: Upload build artifact (Latest)
@@ -199,6 +200,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
       ### Upload Asset as Pre-Release
       - name: Upload build artifact (Pre-Release)
@@ -207,7 +209,8 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: usinessCentral.LinterCop.AL-PreRelease.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.
+          compression-level: 0 # no compression
 
       ### Compatibility with previous naming of files
       ### Release Asset as Current
@@ -218,6 +221,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.current.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
       # ### Release Asset as Next
       - name: Upload build artifact (Next)
@@ -227,6 +231,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.next.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
   sign-job:
     name: Sign
@@ -287,6 +292,7 @@ jobs:
         run: |
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
           foreach ($a in $artifacts) {
+              Write-Host "gh release upload $($env:RELEASE_TAG) $($a.FullName)"
               gh release upload $env:RELEASE_TAG $a.FullName
           }
 
