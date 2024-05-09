@@ -279,12 +279,12 @@ jobs:
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
       # Publish the signed packages
-      - name: Upload
+      - name: Upload Release Assets
+        id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $tag_name = "${{ needs.setup-matrix.outputs.release-tag-name }}"
-          hub release edit (Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll | ForEach-Object {"-a `"$($_.FullName)`"" }) -m "" "$tag_name"
+          gh release upload "${{ needs.setup-matrix.outputs.release-tag-name }}" (Get-ChildItem -Path $path -Depth 0 -Filter *.dll | ForEach-Object {"`"$($_.FullName)`"" })
 
       # Publish the signed packages
       # - name: Upload Multiple Release Assets
