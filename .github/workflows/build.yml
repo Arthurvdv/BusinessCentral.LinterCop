@@ -287,10 +287,9 @@ jobs:
 
       # Publish the signed packages
       - name: Upload Release Assets
-        shell: powershell
         id: upload-release-assets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
