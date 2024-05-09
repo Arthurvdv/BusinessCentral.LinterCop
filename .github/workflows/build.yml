@@ -241,6 +241,8 @@ jobs:
       - matrix-job
     if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
     steps:
+      - uses: actions/checkout@v4
+
       # .NET is required on the agent for the tool to run
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
