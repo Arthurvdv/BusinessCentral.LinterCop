@@ -292,6 +292,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
+          gh auth login
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
           foreach ($a in $artifacts) {
               Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
