@@ -181,6 +181,10 @@ jobs:
 
           (Get-Content AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File AssemblyInfo.cs
 
+          $test2 = Get-Content AssemblyInfo.cs
+
+          Write-Host AssemblyInfo.cs
+
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
