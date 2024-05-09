@@ -209,7 +209,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: usinessCentral.LinterCop.AL-PreRelease.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
       ### Compatibility with previous naming of files
@@ -295,7 +295,7 @@ jobs:
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
           foreach ($a in $artifacts) {
               Write-Host "gh release upload $($env:RELEASE_TAG) $($a.FullName)"
-              gh release upload $env:RELEASE_TAG $a.FullName
+              gh release upload "$env:RELEASE_TAG" "$a.FullName"
           }
 
       # Publish the signed packages
