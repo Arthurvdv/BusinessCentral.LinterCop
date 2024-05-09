@@ -287,6 +287,7 @@ jobs:
 
       # Publish the signed packages
       - name: Upload Release Assets
+        shell: cmd
         id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
