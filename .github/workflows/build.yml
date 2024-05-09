@@ -286,6 +286,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: BuildArtifacts
+          assets_path: BuildArtifacts
           # asset_name: ${{ matrix.assetname }}
           # asset_content_type: application/octet-stream
