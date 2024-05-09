@@ -231,7 +231,9 @@ jobs:
   sign-job:
     name: Sign
     runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
-    needs: matrix-job
+    needs:
+      - setup-matrix
+      - matrix-job
     if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
     steps:
       # .NET is required on the agent for the tool to run
