@@ -184,67 +184,74 @@ jobs:
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build artifact
+        id: upload-build-asset
+        uses: actions/upload-artifact@v3
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: ${{ matrix.assetname }}
-          asset_content_type: application/octet-stream
+          name: ${{ matrix.assetname }}
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
-      ### Release Asset as Latest
-      - name: Upload Release Asset (Latest)
-        id: upload-release-asset-latest
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.dll
-          asset_content_type: application/octet-stream
+      # - name: Upload Release Asset
+      #   id: upload-release-asset
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.GH_eventName != 'pull_request' }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: ${{ matrix.assetname }}
+      #     asset_content_type: application/octet-stream
 
-      ### Release Asset as Pre-Release
-      - name: Upload Release Asset (Pre-Release)
-        id: upload-release-asset-prerelease
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
-          asset_content_type: application/octet-stream
+      # ### Release Asset as Latest
+      # - name: Upload Release Asset (Latest)
+      #   id: upload-release-asset-latest
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: BusinessCentral.LinterCop.dll
+      #     asset_content_type: application/octet-stream
 
-      ### Compatibility with previous naming of files
-      ### Release Asset as Current
-      - name: Upload Release Asset (Current)
-        id: upload-release-asset-current
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.current.dll
-          asset_content_type: application/octet-stream
+      # ### Release Asset as Pre-Release
+      # - name: Upload Release Asset (Pre-Release)
+      #   id: upload-release-asset-prerelease
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
+      #     asset_content_type: application/octet-stream
 
-      ### Release Asset as Next
-      - name: Upload Release Asset (Next)
-        id: upload-release-asset-next
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.next.dll
-          asset_content_type: application/octet-stream
+      # ### Compatibility with previous naming of files
+      # ### Release Asset as Current
+      # - name: Upload Release Asset (Current)
+      #   id: upload-release-asset-current
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: BusinessCentral.LinterCop.current.dll
+      #     asset_content_type: application/octet-stream
+
+      # ### Release Asset as Next
+      # - name: Upload Release Asset (Next)
+      #   id: upload-release-asset-next
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: BusinessCentral.LinterCop.next.dll
+      #     asset_content_type: application/octet-stream
