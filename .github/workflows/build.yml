@@ -183,7 +183,7 @@ jobs:
 
           $test2 = Get-Content AssemblyInfo.cs
 
-          Write-Host AssemblyInfo.cs
+          Write-Host $test2
 
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
