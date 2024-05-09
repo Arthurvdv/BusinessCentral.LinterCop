@@ -279,14 +279,22 @@ jobs:
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
       # Publish the signed packages
-      - name: Upload Multiple Release Assets
-        id: upload-release-assets
-        uses: dwenegar/upload-release-assets@v1
+      - name: Upload
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          assets_path: BuildArtifacts
+        run: |
+          tag_name="${GITHUB_REF##*/}"
+          hub release edit $(find . -type f -name "*.dll" -printf "-a %p ") -m "" "${{ needs.setup-matrix.outputs.release-tag-name }}"
+
+      # Publish the signed packages
+      # - name: Upload Multiple Release Assets
+      #   id: upload-release-assets
+      #   uses: dwenegar/upload-release-assets@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     assets_path: BuildArtifacts
 
       #   # Publish the signed packages
       # - name: Upload Release Assets
