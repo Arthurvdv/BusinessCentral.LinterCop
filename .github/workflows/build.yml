@@ -170,7 +170,7 @@ jobs:
         shell: pwsh
         if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
-          AL_VERSION: "${{ needs.setup-matrix.outputs.version }}"
+          AL_VERSION: ${{ needs.setup-matrix.outputs.version }}
         run: $test = $env:AL_VERSION.GetType()
 
           Write-Host $test
