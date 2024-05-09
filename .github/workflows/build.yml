@@ -11,17 +11,6 @@ jobs:
     name: Setup
     runs-on: ubuntu-latest
     steps:
-      - name: Create Release
-        id: create-release
-        uses: release-drafter/release-drafter@v6
-        if: github.event_name != 'pull_request'
-        with:
-          prerelease: ${{ github.ref != 'refs/heads/master' }}
-          commitish: ${{ github.ref }}
-          disable-autolabeler: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
@@ -276,8 +265,24 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
-        # Publish the signed packages
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        id: create-release
+        uses: release-drafter/release-drafter@v6
         with:
-          path: BuildArtifacts
+          prerelease: ${{ github.ref != 'refs/heads/master' }}
+          commitish: ${{ github.ref }}
+          disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        # Publish the signed packages
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: BuildArtifacts
+          # asset_name: ${{ matrix.assetname }}
+          # asset_content_type: application/octet-stream
