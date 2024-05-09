@@ -283,8 +283,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag_name="${GITHUB_REF##*/}"
-          hub release edit $(find . -type f -name "*.dll" -printf "-a %p ") -m "" "${{ needs.setup-matrix.outputs.release-tag-name }}"
+          tag_name="${{ needs.setup-matrix.outputs.release-tag-name }}"
+          hub release edit $(find . -type f -name "*.dll" -printf "-a %p ") -m "" "$tag_name"
 
       # Publish the signed packages
       # - name: Upload Multiple Release Assets
