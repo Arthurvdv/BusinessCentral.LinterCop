@@ -179,7 +179,7 @@ jobs:
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
-          (Get-Content AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', ("AssemblyTitle(`"AL-$env:AL_VERSION`")") | Out-File AssemblyInfo.cs
+          (Get-Content AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-10.0.0`")" | Out-File AssemblyInfo.cs
 
           $test2 = Get-Content AssemblyInfo.cs
 
