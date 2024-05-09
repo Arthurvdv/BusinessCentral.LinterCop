@@ -290,12 +290,12 @@ jobs:
         id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
+          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
           foreach ($a in $artifacts) {
-              Write-Host "gh release upload $($env:RELEASE_TAG_ID) $($a.FullName)"
-              gh release upload "$env:RELEASE_TAG_ID" "$($a.FullName)"
+              Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
+              gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
           }
 
       # Publish the signed packages
