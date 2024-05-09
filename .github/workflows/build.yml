@@ -103,7 +103,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("12.0.0") }
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("14.0.1002061") }
 
           $matrix = @()
           foreach ($result in $results) {
@@ -171,7 +171,11 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
           AL_VERSION: "${{ needs.setup-matrix.outputs.version }}"
-        run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
+        run: $test = $env:AL_VERSION.GetType()
+
+          Write-Host $test
+
+          (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
