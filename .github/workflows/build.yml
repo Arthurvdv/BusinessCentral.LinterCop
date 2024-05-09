@@ -186,72 +186,98 @@ jobs:
 
       - name: Upload build artifact
         id: upload-build-asset
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.assetname }}
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
-      # - name: Upload Release Asset
-      #   id: upload-release-asset
-      #   uses: actions/upload-release-asset@v1
-      #   if: ${{ matrix.GH_eventName != 'pull_request' }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: ${{ matrix.assetname }}
-      #     asset_content_type: application/octet-stream
+      ### Upload Asset as Latest
+      - name: Upload build artifact (Latest)
+        id: upload-build-asset-latest
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
+        with:
+          name: BusinessCentral.LinterCop.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
-      # ### Release Asset as Latest
-      # - name: Upload Release Asset (Latest)
-      #   id: upload-release-asset-latest
-      #   uses: actions/upload-release-asset@v1
-      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: BusinessCentral.LinterCop.dll
-      #     asset_content_type: application/octet-stream
+      ### Upload Asset as Pre-Release
+      - name: Upload build artifact (Pre-Release)
+        id: upload-build-asset-prerelease
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+        with:
+          name: usinessCentral.LinterCop.AL-PreRelease.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
-      # ### Release Asset as Pre-Release
-      # - name: Upload Release Asset (Pre-Release)
-      #   id: upload-release-asset-prerelease
-      #   uses: actions/upload-release-asset@v1
-      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
-      #     asset_content_type: application/octet-stream
-
-      # ### Compatibility with previous naming of files
-      # ### Release Asset as Current
-      # - name: Upload Release Asset (Current)
-      #   id: upload-release-asset-current
-      #   uses: actions/upload-release-asset@v1
-      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: BusinessCentral.LinterCop.current.dll
-      #     asset_content_type: application/octet-stream
+      ### Compatibility with previous naming of files
+      ### Release Asset as Current
+      - name: Upload build artifact (Current)
+        id: upload-build-asset-current
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
+        with:
+          name: BusinessCentral.LinterCop.current.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
       # ### Release Asset as Next
-      # - name: Upload Release Asset (Next)
-      #   id: upload-release-asset-next
-      #   uses: actions/upload-release-asset@v1
-      #   if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: BusinessCentral.LinterCop.next.dll
-      #     asset_content_type: application/octet-stream
+      - name: Upload build artifact (Next)
+        id: upload-build-asset-next
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+        with:
+          name: BusinessCentral.LinterCop.next.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+
+  sign-job:
+    name: Sign
+    runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
+    needs: matrix-job
+    if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
+    steps:
+      # .NET is required on the agent for the tool to run
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+
+        # Install the code signing tool
+      - name: Install Sign CLI tool
+        run: dotnet tool install --tool-path . sign --version 0.9.0-beta.23127.3
+
+      # Download artifacts
+      - name: Download signing config
+        uses: actions/download-artifact@v4
+        with:
+          path: BuildArtifacts
+
+        # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
+      - name: "Az CLI login"
+        uses: azure/login@v1
+        if: false
+        with:
+          allow-no-subscriptions: true
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+        # Run the signing command
+      - name: Sign artifacts
+        shell: pwsh
+        if: false
+        run: >
+          ./sign code azure-key-vault
+          **/*.nupkg
+          --base-directory "${{ github.workspace }}/BuildArtifacts"
+          --file-list "${{ github.workspace }}/config/filelist.txt"
+          --publisher-name "Contoso"
+          --description "One Sign CLI demo"
+          --description-url "https://github.com/dotnet/sign"
+          --azure-key-vault-managed-identity true
+          --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
+          --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
+
+        # Publish the signed packages
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: BuildArtifacts
