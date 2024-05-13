@@ -289,6 +289,7 @@ jobs:
         id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
           WORKSPACE: ${{ github.workspace }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
@@ -300,7 +301,7 @@ jobs:
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
           $contents = Get-ChildItem -Path BuildArtifacts | Select-Object Name, Directory, LastWriteTime, Length
-          Write-Host $contents
+          Write-Host $contents | Format-Table
 
           Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)"
           gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)
