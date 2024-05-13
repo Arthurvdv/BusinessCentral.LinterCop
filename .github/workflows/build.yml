@@ -263,7 +263,7 @@ jobs:
 
       # Rename artifacts
       - name: Rename artifacts
-        shell: pwsh
+        # shell: pwsh
         run: >
           # Retrieve the artifacts
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
