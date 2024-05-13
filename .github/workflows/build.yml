@@ -281,7 +281,7 @@ jobs:
       # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
       - name: "Az CLI login"
         uses: azure/login@v1
-        if: false
+        if: true
         with:
           allow-no-subscriptions: true
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
