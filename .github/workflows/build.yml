@@ -281,15 +281,20 @@ jobs:
               Write-Host $a.FullName
           }
 
-      # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
-      - name: "Az CLI login"
-        uses: azure/login@v1
-        if: true
+      # # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
+      # - name: "Az CLI login"
+      #   uses: azure/login@v1
+      #   if: true
+      #   with:
+      #     allow-no-subscriptions: true
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: "Azure Login"
+        uses: azure/login@v2
         with:
-          allow-no-subscriptions: true
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Run the signing command
       - name: Sign artifacts
