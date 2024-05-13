@@ -260,7 +260,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: BuildArtifacts
-          # merge-multiple: true
 
       - run: ls -R BuildArtifacts
 
@@ -294,27 +293,19 @@ jobs:
         id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          WORKSPACE: ${{ github.workspace }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
-          Write-Host "Login ..."
-          gh auth login
+          # Write-Host "Login ..."
+          # gh auth login
 
-          Write-Host "Status:"
-          gh auth status
-          $artifacts = Get-ChildItem -Depth 0 -Filter *.dll
+          # Write-Host "Status:"
+          # gh auth status
+          $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object {  $_.Name -like 'BusinessCentral.LinterCop*.dll' }
 
-          $contents = Get-ChildItem -Path BuildArtifacts | Select-Object Name, Directory, Length
-          $contents | Format-Table | Out-String | % {Write-Host $_}
-
-          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)"
-          gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)
-
-          # foreach ($a in $artifacts) {
-          #     Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
-          #     gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)" --clobber
-          # }
+          foreach ($a in $artifacts) {
+              Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
+              gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
+          }
 
       # Publish the signed packages
       # - name: Upload Multiple Release Assets
