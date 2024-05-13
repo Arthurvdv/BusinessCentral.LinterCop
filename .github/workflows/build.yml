@@ -333,23 +333,11 @@ jobs:
       #     }
 
       # Publish the signed packages
-      # - name: Upload Multiple Release Assets
-      #   id: upload-release-assets
-      #   uses: dwenegar/upload-release-assets@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     assets_path: BuildArtifacts
-
-      # Publish the signed packages
-      - name: Upload Release Assets
+      - name: Upload Multiple Release Assets
         id: upload-release-assets
-        uses: actions/upload-release-asset@v1
+        uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
           assets_path: BuildArtifacts
-          # asset_name: ${{ matrix.assetname }}
-          # asset_content_type: application/octet-stream
