@@ -300,10 +300,13 @@ jobs:
 
           Write-Host $artifacts
 
-          foreach ($a in $artifacts) {
-              Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
-              gh release upload --clobber "$env:RELEASE_TAG_NAME" "$($a.FullName)"
-          }
+          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" "${{ github.workspace }}/BuildArtifacts/*.*"  --clobber"
+          gh release upload "$env:RELEASE_TAG_NAME" "${{ github.workspace }}/BuildArtifacts/*.*"  --clobber
+
+          # foreach ($a in $artifacts) {
+          #     Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
+          #     gh release upload  "$env:RELEASE_TAG_NAME" "$($a.FullName)" --clobber
+          # }
 
       # Publish the signed packages
       # - name: Upload Multiple Release Assets
