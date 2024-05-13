@@ -190,7 +190,7 @@ jobs:
         with:
           name: ${{ matrix.assetname }}
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          #compression-level: 0 # no compression
+          compression-level: 0 # no compression
 
       ### Upload Asset as Latest
       - name: Upload build artifact (Latest)
@@ -200,7 +200,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          #compression-level: 0 # no compression
+          compression-level: 0 # no compression
 
       ### Upload Asset as Pre-Release
       - name: Upload build artifact (Pre-Release)
@@ -210,7 +210,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.AL-PreRelease.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          #compression-level: 0 # no compression
+          compression-level: 0 # no compression
 
       ### Compatibility with previous naming of files
       ### Release Asset as Current
@@ -221,7 +221,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.current.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          #compression-level: 0 # no compression
+          compression-level: 0 # no compression
 
       # ### Release Asset as Next
       - name: Upload build artifact (Next)
@@ -231,7 +231,7 @@ jobs:
         with:
           name: BusinessCentral.LinterCop.next.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          #compression-level: 0 # no compression
+          compression-level: 0 # no compression
 
   sign-job:
     name: Sign
@@ -246,7 +246,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # .NET is required on the agent for the tool to run
+      # Disable Setup .NET
+      # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
+      # dotnet-install: .NET Core SDK with version '8.0.204' is already installed.
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         if: false
@@ -268,17 +270,10 @@ jobs:
       - name: Rename artifacts
         run: |
           # Retrieve the artifacts
-          $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
+          $artifacts = Get-ChildItem -Path BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           # Rename the artifact (BusinessCentral.LinterCop.dll) in every directory to the name of it's parent directory
           $artifacts | ForEach-Object { Rename-Item -Path $_.FullName -NewName $_.Directory.Name }
-
-          # Retrieve the renamed artifacts
-          $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
-
-          foreach ($a in $artifacts) {
-              Write-Host $a.FullName
-          }
 
       # - name: Azure login
       #   uses: azure/login@v1
@@ -328,5 +323,5 @@ jobs:
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           foreach ($a in $artifacts) {
-              gh release upload $env:RELEASE_TAG_NAME $a.FullName
+              gh release upload "$env:RELEASE_TAG_NAME" $a.FullName
           }
