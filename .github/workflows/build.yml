@@ -246,11 +246,13 @@ jobs:
       # .NET is required on the agent for the tool to run
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
+        if: false
         with:
           dotnet-version: 8.0.*
 
         # Install the code signing tool
       - name: Install Sign CLI tool
+        if: false
         run: dotnet tool install --tool-path . sign --version 0.9.0-beta.23127.3
 
       # Download artifacts
@@ -300,8 +302,8 @@ jobs:
           gh auth status
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
-          $contents = Get-ChildItem -Path $BuildArtifacts | Select-Object Name, Directory, Length
-          $contents | Format-Table | Out-String| % {Write-Host $_}
+          $contents = Get-ChildItem -Path BuildArtifacts | Select-Object Name, Directory, Length
+          $contents | Format-Table | Out-String | % {Write-Host $_}
 
           Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)"
           gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)
