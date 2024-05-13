@@ -260,6 +260,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: BuildArtifacts
+          compression-level: 0 # no compression
 
         # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
       - name: "Az CLI login"
