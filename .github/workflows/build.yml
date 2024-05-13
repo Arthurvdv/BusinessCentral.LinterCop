@@ -267,7 +267,7 @@ jobs:
       # Rename artifacts
       - name: Rename artifacts
         # shell: pwsh
-        run: >
+        run: |
           # Retrieve the artifacts
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
@@ -281,6 +281,13 @@ jobs:
               Write-Host $a.FullName
           }
 
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZ_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
       # # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
       # - name: "Az CLI login"
       #   uses: azure/login@v1
@@ -291,11 +298,11 @@ jobs:
       #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
       #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: "Azure Login"
-        uses: azure/login@v2
-        with:
-          allow-no-subscriptions: true
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: "Azure Login"
+      #   uses: azure/login@v2
+      #   with:
+      #     allow-no-subscriptions: true
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Run the signing command
       - name: Sign artifacts
