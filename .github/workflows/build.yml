@@ -322,6 +322,8 @@ jobs:
         run: |
           gh auth login
 
+          gh release list
+
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           foreach ($a in $artifacts) {
