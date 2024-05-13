@@ -292,17 +292,17 @@ jobs:
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           Write-Host "Login ..."
-          winpty gh auth login
+          gh auth login
 
           Write-Host "Status:"
-          winpty gh auth status
+          gh auth status
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
           Write-Host $artifacts
 
           foreach ($a in $artifacts) {
-              Write-Host "winpty gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
-              winpty gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
+              Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
+              gh release upload --clobber "$env:RELEASE_TAG_NAME" "$($a.FullName)"
           }
 
       # Publish the signed packages
