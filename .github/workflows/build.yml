@@ -323,6 +323,6 @@ jobs:
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           foreach ($a in $artifacts) {
-              Write-Host "gh release upload `"$env:RELEASE_TAG_NAME`" `"$($a.FullName)`""
-              gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
+              Write-Host "gh release upload $env:RELEASE_TAG_NAME `"$($a.FullName)`""
+              gh release upload $env:RELEASE_TAG_NAME "$($a.FullName)"
           }
