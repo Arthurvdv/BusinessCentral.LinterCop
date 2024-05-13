@@ -279,14 +279,14 @@ jobs:
           }
 
       # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
-      # - name: "Az CLI login"
-      #   uses: azure/login@v1
-      #   if: false
-      #   with:
-      #     allow-no-subscriptions: true
-      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: "Az CLI login"
+        uses: azure/login@v1
+        if: false
+        with:
+          allow-no-subscriptions: true
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # Run the signing command
       - name: Sign artifacts
@@ -310,11 +310,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
-          # Write-Host "Login ..."
-          # gh auth login
-
-          # Write-Host "Status:"
-          # gh auth status
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           foreach ($a in $artifacts) {
