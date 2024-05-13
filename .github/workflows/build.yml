@@ -318,26 +318,15 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
-      # # Publish the signed packages
-      # - name: Upload Release Assets
-      #   id: upload-release-assets
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
-      #   run: |
-      #     $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
-
-      #     foreach ($a in $artifacts) {
-      #         Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
-      #         gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
-      #     }
-
       # Publish the signed packages
-      - name: Upload Multiple Release Assets
+      - name: Upload Release Assets
         id: upload-release-assets
-        uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          assets_path: BuildArtifacts
+          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+        run: |
+          $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
+
+          foreach ($a in $artifacts) {
+              gh release upload $env:RELEASE_TAG_NAME $a.FullName
+          }
