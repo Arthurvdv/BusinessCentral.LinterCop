@@ -259,10 +259,8 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          # github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
           path: BuildArtifacts
-          pattern: BusinessCentral.LinterCop*
-          merge-multiple: true
+          # merge-multiple: true
 
       - run: ls -R BuildArtifacts
 
