@@ -186,7 +186,7 @@ jobs:
 
       - name: Upload build artifact
         id: upload-build-asset
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.assetname }}
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
@@ -195,7 +195,7 @@ jobs:
       ### Upload Asset as Latest
       - name: Upload build artifact (Latest)
         id: upload-build-asset-latest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         with:
           name: BusinessCentral.LinterCop.dll
@@ -205,7 +205,7 @@ jobs:
       ### Upload Asset as Pre-Release
       - name: Upload build artifact (Pre-Release)
         id: upload-build-asset-prerelease
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: BusinessCentral.LinterCop.AL-PreRelease.dll
@@ -216,7 +216,7 @@ jobs:
       ### Release Asset as Current
       - name: Upload build artifact (Current)
         id: upload-build-asset-current
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         with:
           name: BusinessCentral.LinterCop.current.dll
@@ -226,7 +226,7 @@ jobs:
       # ### Release Asset as Next
       - name: Upload build artifact (Next)
         id: upload-build-asset-next
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: BusinessCentral.LinterCop.next.dll
@@ -257,7 +257,7 @@ jobs:
 
       # Download artifacts
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           path: BuildArtifacts
           #compression-level: 0 # no compression
