@@ -103,7 +103,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("12.0.0") }
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("14.0.986719") }
 
           $matrix = @()
           foreach ($result in $results) {
@@ -298,6 +298,9 @@ jobs:
           Write-Host "Status:"
           gh auth status
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
+
+          Write-Host $artifacts
+
           foreach ($a in $artifacts) {
               Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
               gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
