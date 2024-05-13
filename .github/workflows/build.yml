@@ -275,9 +275,8 @@ jobs:
         if: false
         run: >
           ./sign code azure-key-vault
-          **/*.nupkg
+          **/*.dll
           --base-directory "${{ github.workspace }}/BuildArtifacts"
-          --file-list "${{ github.workspace }}/config/filelist.txt"
           --publisher-name "Contoso"
           --description "One Sign CLI demo"
           --description-url "https://github.com/dotnet/sign"
@@ -293,17 +292,17 @@ jobs:
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           Write-Host "Login ..."
-          gh auth login
+          winpty gh auth login
 
           Write-Host "Status:"
-          gh auth status
+          winpty gh auth status
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
           Write-Host $artifacts
 
           foreach ($a in $artifacts) {
-              Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
-              gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
+              Write-Host "winpty gh release upload $($env:RELEASE_TAG_NAME) $($a.FullName)"
+              winpty gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)"
           }
 
       # Publish the signed packages
