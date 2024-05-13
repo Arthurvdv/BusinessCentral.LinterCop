@@ -289,6 +289,7 @@ jobs:
         id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKSPACE: ${{ github.workspace }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           Write-Host "Login ..."
@@ -298,14 +299,12 @@ jobs:
           gh auth status
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
-          Write-Host $artifacts
-
-          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" "${{ github.workspace }}/BuildArtifacts/*.*"  --clobber"
-          gh release upload "$env:RELEASE_TAG_NAME" "${{ github.workspace }}/BuildArtifacts/*.*"  --clobber
+          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)"
+          gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)
 
           # foreach ($a in $artifacts) {
           #     Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
-          #     gh release upload  "$env:RELEASE_TAG_NAME" "$($a.FullName)" --clobber
+          #     gh release upload "$env:RELEASE_TAG_NAME" "$($a.FullName)" --clobber
           # }
 
       # Publish the signed packages
