@@ -258,21 +258,22 @@ jobs:
       # Download artifacts
       - name: Download artifacts
         uses: actions/download-artifact@v4
-        # with:
-        # path: BuildArtifacts
-        #compression-level: 0 # no compression
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
+          path: BuildArtifacts
+          merge-multiple: true
 
         # Login to Azure using a ServicePrincipal configured to authenticate agaist a GitHub Action
-      - name: "Az CLI login"
-        uses: azure/login@v1
-        if: false
-        with:
-          allow-no-subscriptions: true
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # - name: "Az CLI login"
+      #   uses: azure/login@v1
+      #   if: false
+      #   with:
+      #     allow-no-subscriptions: true
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-        # Run the signing command
+      # Run the signing command
       - name: Sign artifacts
         shell: pwsh
         if: false
@@ -303,11 +304,11 @@ jobs:
           gh auth status
           $artifacts = Get-ChildItem -Depth 0 -Filter *.dll
 
-          $contents = Get-ChildItem | Select-Object Name, Directory, Length
+          $contents = Get-ChildItem -Path BuildArtifacts | Select-Object Name, Directory, Length
           $contents | Format-Table | Out-String | % {Write-Host $_}
 
-          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\*.dll)"
-          gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\*.dll)
+          Write-Host "gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)"
+          gh release upload "$env:RELEASE_TAG_NAME" (Get-Item $env:WORKSPACE\BuildArtifacts\*.dll)
 
           # foreach ($a in $artifacts) {
           #     Write-Host "gh release upload --clobber $($env:RELEASE_TAG_NAME) $($a.FullName)"
