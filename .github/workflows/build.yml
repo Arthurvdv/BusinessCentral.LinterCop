@@ -269,7 +269,7 @@ jobs:
       # Rename artifacts
       - name: Rename artifacts
         run: |
-          # Retrieve the artifacts
+          # Get list of artifacts files
           $artifacts = Get-ChildItem -Path BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           # Rename the artifact (BusinessCentral.LinterCop.dll) in every directory to the name of it's parent directory
@@ -323,5 +323,5 @@ jobs:
           $artifacts = Get-ChildItem -Path $BuildArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
           foreach ($a in $artifacts) {
-              gh release upload "$env:RELEASE_TAG_NAME" $a.FullName
+              gh release upload "$env:RELEASE_TAG_NAME" $($a.FullName)
           }
