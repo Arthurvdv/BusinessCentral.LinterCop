@@ -135,10 +135,7 @@ jobs:
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
-      release-id: ${{ steps.create-release.outputs.id }}
-      release-tag: ${{ steps.create-release.outputs.tag }}
       release-tag-name: ${{ steps.create-release.outputs.tag_name }}
-      release-upload-url: ${{ steps.create-release.outputs.upload_url }}
 
   matrix-job:
     name: Build
@@ -239,14 +236,12 @@ jobs:
     runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
     permissions:
       id-token: write
-      contents: write # Necessary for Uploading Release Assets
+      contents: write # Necessary for Uploading Release Assets with GitHub CLI
     needs:
       - setup-matrix
       - matrix-job
     if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
     steps:
-      #- uses: actions/checkout@v4
-
       # Disable Setup .NET
       # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
       # dotnet-install: .NET Core SDK with version '8.0.204' is already installed.
@@ -277,13 +272,13 @@ jobs:
               New-Item -Path BuildArtifacts -ItemType Directory -Force | Out-Null
           }
 
-          # Rename the artifact (BusinessCentral.LinterCop.dll) in every directory to the name of it's parent directory
+          # Move the artifacts (BusinessCentral.LinterCop.dll) in every directory to a combined folder and rename the file to the name of it's parent directory
           $artifacts | ForEach-Object { Move-Item -Path $_.FullName -Destination (Join-Path 'BuildArtifacts' $_.Directory.Name) }
 
-      # - name: "Azure Login"
-      #   uses: azure/login@v2
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: "Azure Login"
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Run the signing command
       - name: Sign artifacts
@@ -294,10 +289,7 @@ jobs:
           --base-directory "${{ github.workspace }}\BuildArtifacts"
           --description "BusinessCentral.LinterCop"
           --description-url "https://github.com/StefanMaron/BusinessCentral.LinterCop"
-          --azure-key-vault-tenant-id "${{ secrets.AZURE_TENANT_ID }}"
-          --azure-key-vault-client-id "${{ secrets.AZURE_CLIENT_ID }}"
-          --azure-key-vault-client-secret "${{ secrets.AZURE_CLIENT_SECRET }}"
-          --azure-key-vault-managed-identity false
+          --azure-key-vault-managed-identity true
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
@@ -310,8 +302,4 @@ jobs:
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
-
-          foreach ($a in $artifacts) {
-              Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
-              gh release upload --repo "$env:GITHUB_REPO" "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
-          }
+          $artifacts | ForEach-Object { gh release upload --repo "$env:GITHUB_REPO" "$env:RELEASE_TAG_NAME" "$_.FullName" }
