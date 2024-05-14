@@ -299,38 +299,38 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
-      # Publish the signed packages
-      - name: Upload Release Assets
-        id: upload-release-assets
-        env:
-          # GH_TOKEN: ${{ github.token }}
-          # GH_REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ needs.setup-matrix.outputs.release-tag }}
-          RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
-          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
-        run: |
-          Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
-          Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
-          Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
-
-          gh release upload $GITHUB_REF "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
-
-          # gh release upload "0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
-
-          # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
-
-          # foreach ($a in $artifacts) {
-          #     Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
-          #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
-          # }
-
-      # - name: Publish signed artifacts
+      # # Publish the signed packages
+      # - name: Upload Release Assets
       #   id: upload-release-assets
-      #   uses: softprops/action-gh-release@v2
       #   env:
+      #     # GH_TOKEN: ${{ github.token }}
+      #     # GH_REPO: ${{ github.repository }}
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
-      #     files: BuildArtifacts\*
+      #     GITHUB_REPO: ${{ github.repository }}
+      #     RELEASE_TAG: ${{ needs.setup-matrix.outputs.release-tag }}
+      #     RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
+      #     RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+      #   run: |
+      #     Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
+      #     Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
+      #     Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
+
+      #     gh release upload $GITHUB_REF "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+
+      #     # gh release upload "0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+
+      #     # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
+
+      #     # foreach ($a in $artifacts) {
+      #     #     Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
+      #     #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
+      #     # }
+
+      - name: Publish signed artifacts
+        id: upload-release-assets
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
+          files: "BuildArtifacts/BusinessCentral.LinterCop.AL-14.0.1010940.dll"
