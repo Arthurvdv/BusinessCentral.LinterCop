@@ -311,6 +311,8 @@ jobs:
           RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
+          gh release list
+
           Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
           Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
           Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
