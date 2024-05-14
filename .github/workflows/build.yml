@@ -321,7 +321,7 @@ jobs:
           Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
           Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
 
-          gh release upload "v0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+          gh release upload "0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
 
           # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll 
 
