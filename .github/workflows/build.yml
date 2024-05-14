@@ -315,8 +315,11 @@ jobs:
       #         gh release upload $env:RELEASE_TAG_ID "$($a.FullName)"
       #     }
 
-      - name: Release
+      - name: Publish signed artifacts
+        id: upload-release-assets
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
           files: BuildArtifacts\*
