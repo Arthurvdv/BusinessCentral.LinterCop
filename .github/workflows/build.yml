@@ -299,36 +299,44 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
-      - name: Upgrade gh cli to the latest version
-        run: choco upgrade gh
-
       # Publish the signed packages
-      - name: Upload Release Assets
-        id: upload-release-assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ needs.setup-matrix.outputs.release-tag }}
-          RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
-          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
-        run: |
-          gh --version
-          gh release list
+      - name: Upload Assets to Release with a wildcard
+        uses: csexton/release-asset-action@v3
+        with:
+          pattern: "BuildArtifacts/*.dll"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-url: ${{ needs.setup-matrix.outputs.release-upload-url }}
 
-          Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
-          Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
-          Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
+      # - name: Upgrade gh cli to the latest version
+      #   run: choco upgrade gh
 
-          gh release upload "0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+      # # Publish the signed packages
+      # - name: Upload Release Assets
+      #   id: upload-release-assets
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #     GH_REPO: ${{ github.repository }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GITHUB_REPO: ${{ github.repository }}
+      #     RELEASE_TAG: ${{ needs.setup-matrix.outputs.release-tag }}
+      #     RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
+      #     RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+      #   run: |
+      #     gh --version
+      #     gh release list
 
-          # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll 
+      #     Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
+      #     Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
+      #     Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
 
-          # foreach ($a in $artifacts) {
-          #     Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
-          #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
-          # }
+      #     gh release upload "0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+
+      #     # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
+
+      #     # foreach ($a in $artifacts) {
+      #     #     Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
+      #     #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
+      #     # }
 
       # - name: Publish signed artifacts
       #   id: upload-release-assets
