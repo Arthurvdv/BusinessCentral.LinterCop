@@ -299,6 +299,9 @@ jobs:
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
+      - name: Upgrade gh cli to the latest version
+        uses: upgrade-gh-cli
+
       # Publish the signed packages
       - name: Upload Release Assets
         id: upload-release-assets
