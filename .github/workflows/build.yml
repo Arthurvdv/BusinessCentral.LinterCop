@@ -334,3 +334,4 @@ jobs:
         with:
           tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
           files: "BuildArtifacts/BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+          draft: true
