@@ -300,7 +300,7 @@ jobs:
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
       - name: Upgrade gh cli to the latest version
-        uses: upgrade-gh-cli
+        run: winget upgrade --id GitHub.cli
 
       # Publish the signed packages
       - name: Upload Release Assets
@@ -314,8 +314,6 @@ jobs:
           RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
-          winget upgrade --id GitHub.cli
-
           gh --version
           gh release list
 
