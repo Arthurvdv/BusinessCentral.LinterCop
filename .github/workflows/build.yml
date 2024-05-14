@@ -136,6 +136,7 @@ jobs:
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
       release-id: ${{ steps.create-release.outputs.id }}
+      release-tag: ${{ steps.create-release.outputs.tag }}
       release-tag-name: ${{ steps.create-release.outputs.tag_name }}
       release-upload-url: ${{ steps.create-release.outputs.upload_url }}
 
@@ -306,9 +307,14 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPO: ${{ github.repository }}
-          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+          RELEASE_TAG: ${{ needs.setup-matrix.outputs.release-tag }}
           RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
+          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
+          Write-Host "RELEASE_TAG: $env:RELEASE_TAG"
+          Write-Host "RELEASE_TAG_ID: $env:RELEASE_TAG_ID"
+          Write-Host "RELEASE_TAG_NAME: $env:RELEASE_TAG_NAME"
+
           gh release upload "v0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
 
           # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll 
