@@ -239,7 +239,7 @@ jobs:
     runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
     permissions:
       id-token: write
-      contents: write
+      contents: write # Necessary for Uploading Release Assets
     needs:
       - setup-matrix
       - matrix-job
@@ -280,10 +280,10 @@ jobs:
           # Rename the artifact (BusinessCentral.LinterCop.dll) in every directory to the name of it's parent directory
           $artifacts | ForEach-Object { Move-Item -Path $_.FullName -Destination (Join-Path 'BuildArtifacts' $_.Directory.Name) }
 
-      - name: "Azure Login"
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: "Azure Login"
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Run the signing command
       - name: Sign artifacts
@@ -292,10 +292,9 @@ jobs:
           ./sign code azure-key-vault
           **/*.dll
           --base-directory "${{ github.workspace }}\BuildArtifacts"
-          --publisher-name "Contoso"
-          --description "One Sign CLI demo"
-          --description-url "https://github.com/dotnet/sign"
-          --azure-key-vault-managed-identity true
+          --azure-key-vault-tenant-id "${{ secrets.AZURE_TENANT_ID }}"
+          --azure-key-vault-client-id "${{ secrets.AZURE_CLIENT_ID }}"
+          --azure-key-vault-client-secret "${{ secrets.AZURE_CLIENT_SECRET }}"
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
