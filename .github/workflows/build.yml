@@ -302,4 +302,4 @@ jobs:
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
-          $artifacts | ForEach-Object { gh release upload --repo "$env:GITHUB_REPO" "$env:RELEASE_TAG_NAME" "$_.FullName" }
+          $artifacts | ForEach-Object { gh release upload --repo "$env:GITHUB_REPO" "$env:RELEASE_TAG_NAME" "$_" }
