@@ -292,9 +292,12 @@ jobs:
           ./sign code azure-key-vault
           **/*.dll
           --base-directory "${{ github.workspace }}\BuildArtifacts"
+          --description "BusinessCentral.LinterCop"
+          --description-url "https://github.com/StefanMaron/BusinessCentral.LinterCop"
           --azure-key-vault-tenant-id "${{ secrets.AZURE_TENANT_ID }}"
           --azure-key-vault-client-id "${{ secrets.AZURE_CLIENT_ID }}"
           --azure-key-vault-client-secret "${{ secrets.AZURE_CLIENT_SECRET }}"
+          --azure-key-vault-managed-identity false
           --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
           --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE_ID }}"
 
