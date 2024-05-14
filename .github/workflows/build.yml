@@ -307,12 +307,14 @@ jobs:
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
           RELEASE_TAG_ID: ${{ needs.setup-matrix.outputs.release-id }}
         run: |
-          $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll 
+          gh release upload "v0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
 
-          foreach ($a in $artifacts) {
-              Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
-              gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $a.Name)
-          }
+          # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll 
+
+          # foreach ($a in $artifacts) {
+          #     Write-Host "gh release upload $env:RELEASE_TAG_NAME (Join-Path 'BuildArtifacts' $($a.Name))"
+          #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
+          # }
 
       # - name: Publish signed artifacts
       #   id: upload-release-assets
