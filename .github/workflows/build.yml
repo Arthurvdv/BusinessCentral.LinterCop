@@ -245,7 +245,7 @@ jobs:
       - matrix-job
     if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
     steps:
-      - uses: actions/checkout@v4
+      #- uses: actions/checkout@v4
 
       # Disable Setup .NET
       # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
@@ -307,7 +307,7 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
-          gh release upload "refs/tags/v0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+          gh release upload --repo "Arthurvdv/BusinessCentral.LinterCop" "v0.1.0" "BuildArtifacts\BusinessCentral.LinterCop.AL-14.0.1010940.dll"
 
           # $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
 
