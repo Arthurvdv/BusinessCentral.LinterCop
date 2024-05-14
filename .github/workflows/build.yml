@@ -316,12 +316,12 @@ jobs:
           #     gh release upload "$env:RELEASE_TAG_NAME" (Join-Path 'BuildArtifacts' $a.Name)
           # }
 
-      - name: Publish signed artifacts
-        id: upload-release-assets
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
-          files: "BuildArtifacts/BusinessCentral.LinterCop.AL-14.0.1010940.dll"
-          draft: true
+      # - name: Publish signed artifacts
+      #   id: upload-release-assets
+      #   uses: softprops/action-gh-release@v2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ needs.setup-matrix.outputs.release-tag-name }}
+      #     files: "BuildArtifacts/BusinessCentral.LinterCop.AL-14.0.1010940.dll"
+      #     draft: true
