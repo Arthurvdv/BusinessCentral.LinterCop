@@ -239,7 +239,7 @@ jobs:
     runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
     permissions:
       id-token: write
-      contents: read
+      contents: write
     needs:
       - setup-matrix
       - matrix-job
@@ -303,7 +303,7 @@ jobs:
       - name: Upload Release Assets
         id: upload-release-assets
         env:
-          GITHUB_TOKEN: ${{ secrets.FG_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPO: ${{ github.repository }}
           RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
