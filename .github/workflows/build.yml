@@ -17,7 +17,6 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           prerelease: ${{ github.ref != 'refs/heads/master' }}
-          prerelease-identifier: "alpha" # will create a prerelease with version number x.x.x-alpha.x
           commitish: ${{ github.ref }}
           disable-autolabeler: true
         env:
