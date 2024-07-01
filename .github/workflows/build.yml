@@ -166,7 +166,7 @@ jobs:
         run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
 
       - name: Unzip vsix
-        run: 7z x ALLanguage.vsix "-oms-dynamics-smb.al-latest" ALLanguage -r
+        run: 7z x ALLanguage.vsix "-oms-dynamics-smb.al-latest" ALLanguage/extension/bin/Analyzers -r
 
       - name: Set AssemblyInfo
         shell: pwsh
