@@ -112,13 +112,13 @@ jobs:
           (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
 
       - name: Populate the needed Feature Flags
-        id: feature-flags
+        id: get-feature-flags
         uses: ./.github/actions/feature-flags
         with:
           custom-input: ${{ matrix.version }}
 
       - name: Build
-        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ feature-flags.foo.outputs.feature-flags }} --no-restore --configuration Release
+        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
 
       - name: Upload build artifact
         id: upload-build-asset
