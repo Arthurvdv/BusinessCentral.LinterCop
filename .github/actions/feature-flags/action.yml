@@ -20,5 +20,5 @@ runs:
       env:
         VERSION_NUMBER: ${{ inputs.version-number}}
       run: |
-        $result = .\Get-FeatureFlags.ps1 $env:VERSION_NUMBER
+        $result = ${{github.action_path}}\Get-FeatureFlags.ps1 $env:VERSION_NUMBER
         echo "feature-flags=$($result)" >> $env:GITHUB_OUTPUT
