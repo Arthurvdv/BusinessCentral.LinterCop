@@ -118,7 +118,7 @@ jobs:
           custom-input: ${{ matrix.version }}
 
       - name: Build
-        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
+        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
 
       - name: Upload build artifact
         id: upload-build-asset
