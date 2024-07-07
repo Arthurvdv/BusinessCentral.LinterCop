@@ -28,66 +28,6 @@ jobs:
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
-          function ConvertTo-Version {
-              [OutputType([System.Version])]
-              Param (
-                  [Parameter(Mandatory = $true)]
-                  [string] $version
-              ) 
-              
-              $result = $null
-              if ([System.Version]::TryParse($version, [ref]$result)) {
-                  return $result
-              }
-              else {
-                  Write-Error "The value '$($version)' is not a valid input."
-              }
-          }
-
-          function Get-FeatureFlags {
-              [OutputType([System.String])]
-              Param (
-                  [Parameter(Mandatory = $true)]
-                  [System.Version] $version
-              ) 
-              $featureFlags = ""
-
-              $RuntimeVersion = [Ordered]@{
-                  'Spring2018'          = '1.0'
-                  'Fall2018'            = '2.0'
-                  'Spring2019'          = '3.0'
-                  'Fall2019'            = '4.0'
-                  'Spring2020'          = '5.0'
-                  'Fall2020'            = '6.0'
-                  'Spring2021'          = '7.0'
-                  'Fall2021'            = '8.0'
-                  'Spring2022'          = '9.0'
-                  'Spring2022RV1'       = '9.1'
-                  'Spring2022RV2'       = '9.2'
-                  'Fall2022'            = '10.0'
-                  'Spring2023'          = '11.0'
-                  'Fall2023'            = '12.0'
-                  'Fall2023RV1'         = '12.1'
-                  'Fall2023RV2'         = '12.2'
-                  'Fall2023RV3'         = '12.3'
-                  'Spring2024'          = '13.0'
-                  'Fall2024'            = '14.0'
-                  'Spring2025'          = '15.0'
-                  'Fall2025'            = '16.0'
-
-                  'Spring2024OrGreater' = '13.0.964488'
-                  'ManifestHelper'      = '13.0.937154'
-                  'PageSystemAction'    = '13.0.878831'
-              }
-
-              $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
-              if (![string]::IsNullOrEmpty($supportedRuntimeVersions)) {
-                  $featureFlags = [System.String]::Join("", $supportedRuntimeVersions)
-              }
-
-              return $featureFlags
-          }
-
           $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
               -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
@@ -112,21 +52,12 @@ jobs:
               $assetName = "BusinessCentral.LinterCop.AL-$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
 
-              $featureflags = Get-FeatureFlags($version)
-              if ( $version.Major -gt $versionLatest.Major) {
-                  $featureflags += "#PreRelease"
-              }
-              if ( $version.Major -lt $versionLatest.Major) {
-                  $featureflags += "#Legacy"
-              }
-
               $matrix += [Ordered]@{
                   version      = $result.version;
                   assetname    = $assetName;
                   assetUri     = $assetUri;
                   latest       = $($result.version -eq $versionLatest);
                   prerelease   = $($result.version -eq $versionPreRelease);
-                  featureflags = Get-FeatureFlags($version)
                   GH_eventName = $env:GITHUB_EVENT_NAME
               }
           }
@@ -180,8 +111,14 @@ jobs:
 
           (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
 
+      - name: Populate the needed Feature Flags
+        id: feature-flags
+        uses: ./.github/actions/feature-flags
+        with:
+          custom-input: ${{ matrix.version }}
+
       - name: Build
-        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
+        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ feature-flags.foo.outputs.feature-flags }} --no-restore --configuration Release
 
       - name: Upload build artifact
         id: upload-build-asset
