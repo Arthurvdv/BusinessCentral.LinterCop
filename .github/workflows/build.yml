@@ -131,7 +131,7 @@ jobs:
         id: get-feature-flags
         uses: ./.github/actions/feature-flags
         with:
-          custom-input: ${{ matrix.version }}
+          version-number: ${{ matrix.version }}
 
       - name: Build
         run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
